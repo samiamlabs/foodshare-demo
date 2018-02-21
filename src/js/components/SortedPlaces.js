@@ -21,14 +21,9 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails
+  ExpansionPanelSummary
 } from 'material-ui/ExpansionPanel';
-import List, {
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText
-} from 'material-ui/List';
+import List, {ListItem, ListItemText} from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import Icon from 'material-ui/Icon';
@@ -44,13 +39,14 @@ const styles = theme => ({
     backgroundColor: theme.palette.grey[50],
     padding: theme.spacing.unit
   },
-  listTitle: {
-    display: 'flex',
-    // float: 'left',
-  },
-  card: {
+  titlePaper: {
+    width: '100%',
     // backgroundColor: theme.palette.primary.light
   },
+  listTitle: {
+    display: 'flex'
+  },
+  card: {},
   cardGrid: {
     [theme.breakpoints.down('xs')]: {
       width: '99.5%'
@@ -83,7 +79,6 @@ const styles = theme => ({
     direction: 'column'
   },
   moreButton: {
-    // alignItems: 'flex-start',
     margin: theme.spacing.unit
   },
   addOnList: {
@@ -110,10 +105,9 @@ const styles = theme => ({
   timeDistance: {
     margin: '0px'
   }
-
 });
 
-class RecipeReviewCard extends React.Component {
+class SortedPlaces extends React.Component {
   state = {expanded: false, checked: [], open: false};
 
   handleExpandClick = () => {
@@ -376,11 +370,11 @@ class RecipeReviewCard extends React.Component {
       <div className={classes.root}>
         {snackBar}
         <Paper className={classes.paper}>
-          <div className={classes.listTitle}>
-            <Typography variant="title" gutterBottom={true}>
-              Under 30 minutes
-            </Typography>
-          </div>
+          <Grid container alignItems="center" justify="center" direciton="row">
+            <Grid className={classes.titlePaper} item>
+                <Typography variant="title">Under 30 minutes</Typography>
+            </Grid>
+          </Grid>
           <Grid container spacing={16}>
             <Grid item className={classes.cardGrid}>
               {card1}
@@ -407,8 +401,8 @@ class RecipeReviewCard extends React.Component {
   }
 }
 
-RecipeReviewCard.propTypes = {
+SortedPlaces.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(RecipeReviewCard);
+export default withStyles(styles)(SortedPlaces);

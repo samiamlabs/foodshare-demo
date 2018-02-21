@@ -7,17 +7,11 @@ import {withStyles} from 'material-ui/styles';
 import './App.css';
 
 import SimpleAppBar from './js/components/SimpleAppBar';
-import SortedFoodPlacesList from './js/components/SortedFoodPlacesList';
-
-import Grid from 'material-ui/Grid';
+import SortedPlaces from './js/components/SortedPlaces';
 
 import BottomNavigation, {
   BottomNavigationAction
 } from 'material-ui/BottomNavigation';
-
-// import RestoreIcon from 'material-ui-icons/Restore';
-// import FavoriteIcon from 'material-ui-icons/Favorite';
-// import LocationOnIcon from 'material-ui-icons/LocationOn';
 
 import HomeIcon from 'material-ui-icons/Home';
 import ReceiptIcon from 'material-ui-icons/Receipt';
@@ -60,8 +54,8 @@ class App extends React.Component<{}> {
         <SimpleAppBar />
         <div className={classes.behindAppBar} />
         <div className={classes.backDrop}>
-          <SortedFoodPlacesList />
-          <SortedFoodPlacesList />
+          <SortedPlaces />
+          <SortedPlaces />
         </div>
         <BottomNavigation
           value={value}
