@@ -21,7 +21,7 @@ const styles = theme => ({
   root: {
     position: 'fixed',
     bottom: 0,
-    width: '100%',
+    width: '100%'
   },
   backDrop: {
     flexGrow: 1,
@@ -32,6 +32,9 @@ const styles = theme => ({
   },
   behindBottomNavigation: {
     height: '60px'
+  },
+  bottomNavigation: {
+    // zIndex: 2000,
   }
 });
 
@@ -57,15 +60,15 @@ class App extends React.Component<{}> {
           <SortedPlaces />
           <SortedPlaces />
         </div>
-        <BottomNavigation
-          value={value}
-          onChange={this.handleChange}
-          className={classes.root}
-        >
-          <BottomNavigationAction label="Food" icon={<HomeIcon />} />
-          <BottomNavigationAction label="Orders" icon={<ReceiptIcon />} />
-          <BottomNavigationAction label="Account" icon={<PersonIcon />} />
-        </BottomNavigation>
+          <BottomNavigation
+            className={classes.bottomNavigation}
+            value={value}
+            onChange={this.handleChange}
+          >
+            <BottomNavigationAction label="Food" icon={<HomeIcon />} />
+            <BottomNavigationAction label="Orders" icon={<ReceiptIcon />} />
+            <BottomNavigationAction label="Account" icon={<PersonIcon />} />
+          </BottomNavigation>
         <div className={classes.behindBottomNavigation} />
       </div>
     );

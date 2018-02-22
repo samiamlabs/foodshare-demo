@@ -30,6 +30,11 @@ import Icon from 'material-ui/Icon';
 import Snackbar from 'material-ui/Snackbar';
 import CloseIcon from 'material-ui-icons/Close';
 
+// import SortedPlacesActions from '../actions/SortedPlacesActions';
+// import SortedPlacesStore from '../stores/SortedPlacesStore';
+
+import Fade from 'material-ui/transitions/Fade';
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -104,6 +109,9 @@ const styles = theme => ({
   },
   timeDistance: {
     margin: '0px'
+  },
+  snackBar: {
+    bottom: 55,
   }
 });
 
@@ -173,7 +181,9 @@ class SortedPlaces extends React.Component {
             vertical: 'bottom',
             horizontal: 'left'
           }}
+          className={classes.snackBar}
           open={this.state.open}
+          transition={Fade}
           autoHideDuration={6000}
           onClose={this.handleClose}
           SnackbarContentProps={{
@@ -246,7 +256,7 @@ class SortedPlaces extends React.Component {
             >
               <Checkbox
                 checked={this.state.checked.indexOf(value) !== -1}
-                tabIndex={-1}
+                tabIndex={-2}
                 disableRipple
               />
               <ListItemText primary={this.getListItemName(value)} />
@@ -329,10 +339,16 @@ class SortedPlaces extends React.Component {
           className={classes.timeDistance}
         >
           <Grid item>
-            <Typography variant="body1">20 - 50 minutes</Typography>
+            <IconButton>
+              <Icon>timer</Icon>
+            </IconButton>
+            <Typography variant="caption">20 - 50 minutes</Typography>
           </Grid>
           <Grid item>
-            <Typography variant="body1">500 meters</Typography>
+            <IconButton>
+              <Icon>place</Icon>
+            </IconButton>
+            <Typography variant="caption">500 meters</Typography>
           </Grid>
         </Grid>
         <CardActions className={classes.actions} disableActionSpacing>
