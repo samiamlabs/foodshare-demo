@@ -10,8 +10,8 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 
-// import SortedPlacesActions from '../actions/SortedPlacesActions';
-// import SortedPlacesStore from '../stores/SortedPlacesStore';
+import SortedPlacesActions from '../actions/SortedPlacesActions';
+import SortedPlacesStore from '../stores/SortedPlacesStore';
 
 import Fade from 'material-ui/transitions/Fade';
 
@@ -53,64 +53,22 @@ const styles = theme => ({
 });
 
 class SortedPlaces extends React.Component {
-  state = {expanded: false, open: false};
+  state = {store: SortedPlacesStore.getState()};
 
-  specialInstructionsText: string = "Lots of garlic";
-  mealExpanded: boolean = true;
-
-  addOns: {name: string, price: number} = [
-    {name: 'Fries', price: 20},
-    {name: 'Soda', price: 15},
-    {name: 'Dip', price: 4}
-  ];
-  selectedAddOns: Array<boolean> = [false, false, true];
-
-  numberOfMeals: number = 2;
-  priceOfMeal: number = 48;
-
-  getTotalPrice = () => {
-    let sumOfAddOns: number = 0;
-    this.addOns.forEach(
-      (addOn: {name: string, price: number}, index: number) => {
-        if (this.selectedAddOns[index]) {
-          sumOfAddOns += addOn.price;
-        }
-      }
-    );
-
-    const totalPrice: number =
-      this.numberOfMeals * (this.priceOfMeal + sumOfAddOns);
-    return totalPrice;
+  getStoreState = () => {
+    this.setState({
+      store: SortedPlacesStore.getState()
+    });
   };
 
-  handleExpandClick = () => {
-    this.setState({expanded: !this.state.expanded});
-  };
+  componentWillMount() {
+    SortedPlacesStore.on('change', this.getStoreState);
+    SortedPlacesActions.getFoodPlaces();
+  }
 
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    this.setState({open: false});
-  };
-
-  handleAddOnToggle = (index: number) => {
-    console.log(index);
-  };
-
-  handleAddToCartClick = () => {
-    console.log(
-      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`
-    );
-  };
-
-  handleIncreaseMealNumber = () => {
-    console.log('increase');
-  };
-
-  handleDecreaseMealNumber = () => {
-    console.log('decrease');
-  };
+  componentWillUnMount() {
+    SortedPlacesActions.removeListener('change', this.getStoreState);
+  }
 
   render() {
     const {classes} = this.props;
@@ -154,6 +112,24 @@ class SortedPlaces extends React.Component {
       </div>
     );
 
+    const state = this.state.store;
+    const places = state.get('underThirtyMinutesPlaces');
+
+    const PlaceList = props => {
+      const placeList = [];
+      places.forEach((place, index) => {
+        // FIXME: use list of _id
+        if (index < props.numberOfPlaces) {
+          placeList.push(
+            <Grid key={place.get('_id')} item className={classes.cardGrid}>
+              <Place id={place.get('_id')} />
+            </Grid>
+          );
+        }
+      });
+      return placeList;
+    };
+
     return (
       <div className={classes.root}>
         {snackBar}
@@ -164,24 +140,7 @@ class SortedPlaces extends React.Component {
             </Grid>
           </Grid>
           <Grid container spacing={16}>
-            <Grid item className={classes.cardGrid}>
-              <Place
-                expanded={this.state.expanded}
-                mealExpanded={this.mealExpanded}
-                numberOfMeals={this.numberOfMeals}
-                addOns={this.addOns}
-                selectedAddOns={this.selectedAddOns}
-                totalPrice={this.getTotalPrice()}
-                handleExpandClick={this.handleExpandClick}
-                handleAddOnToggle={this.handleAddOnToggle}
-                handleAddToCartClick={this.handleAddToCartClick}
-                handleIncreaseMealNumber={this.handleIncreaseMealNumber}
-                handleDecreaseMealNumber={this.handleDecreaseMealNumber}
-              />
-            </Grid>
-            <Grid item className={classes.cardGrid}>
-              <Place />
-            </Grid>
+            <PlaceList numberOfPlaces={2} />
           </Grid>
           <Grid
             container

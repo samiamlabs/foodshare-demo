@@ -15,6 +15,8 @@ import Icon from 'material-ui/Icon';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import Button from 'material-ui/Button';
 
+import PlaceActions from '../actions/PlaceActions';
+
 const styles = theme => ({
   addOnList: {
     width: '100%'
@@ -39,8 +41,7 @@ type Props = {
     numberOfSelectedFood: {},
     leftIcon: {}
   },
-  name: string,
-  addOns: Array<{name: string, price: number}>,
+  mealState: any,
   numberOfMeals: number,
   totalPrice: number,
   selectedAddOns: Array<boolean>,
@@ -53,8 +54,26 @@ type Props = {
 };
 
 class Meal extends React.Component<Props, State> {
+
+  handleAddOnToggle = (id: number) => {
+    this.props.handleAddOnToggle(id, this.props.mealState._id);
+  };
+
   render() {
     const {classes} = this.props;
+
+    const {
+      numberOfMeals,
+      selectedAddOns,
+      totalPrice,
+      mealState
+    } = this.props;
+
+    const name = mealState.name;
+
+    const addOns = mealState.add_ons;
+
+    const showAddOns: boolean = addOns.length > 0;
 
     const NumberOfMealsSelector = (props: {numberOfMeals: number}) => {
       return (
@@ -98,12 +117,12 @@ class Meal extends React.Component<Props, State> {
           {props.addOns.map(
             (addOn: {name: string, price: number}, index: number) => (
               <ListItem
-                key={addOn.name}
+                key={addOn._id}
                 dense
                 button
-                onClick={props.handleAddOnToggle.bind(this, index)}
+                onClick={props.handleAddOnToggle.bind(this, addOn._id)}
               >
-                <Checkbox checked={props.selectedAddOns[index]} disableRipple />
+                <Checkbox checked={props.selectedAddOns[addOn._id]} disableRipple />
                 <ListItemText primary={addOn.name} />
                 <ListItemText primary={`${addOn.price} kr`} />
               </ListItem>
@@ -113,26 +132,16 @@ class Meal extends React.Component<Props, State> {
       </div>
     );
 
-    const {
-      addOns,
-      numberOfMeals,
-      selectedAddOns,
-      totalPrice
-    } = this.props;
-
-    const showAddOns: boolean = addOns.length > 0;
-
-
     return (
       <ExpansionPanel expanded={this.props.expanded}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subheading">Burger</Typography>
+          <Typography variant="subheading">{name}</Typography>
         </ExpansionPanelSummary>
         {showAddOns && (
           <AddOnList
             addOns={addOns}
             selectedAddOns={selectedAddOns}
-            handleAddOnToggle={this.props.handleAddOnToggle}
+            handleAddOnToggle={this.handleAddOnToggle}
           />
         )}
         <div>

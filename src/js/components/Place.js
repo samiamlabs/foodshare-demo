@@ -22,6 +22,9 @@ import red from 'material-ui/colors/red';
 
 import Meal from './Meal';
 
+import PlaceStore from '../stores/PlaceStore';
+import PlaceActions from '../actions/PlaceActions';
+
 const styles = theme => ({
   card: {},
   media: {
@@ -49,46 +52,137 @@ const styles = theme => ({
   },
   timeDistance: {
     margin: '0px'
-  },
+  }
 });
 
 type Props = {
-  expanded: boolean,
-  mealExpanded: boolean,
-  addOns: {name: string, price: number},
-  selectedAddOns: Array<boolean>,
-  totalPrice: number,
-  specialInstructionsText: string,
-  expanded: boolean,
-  handleExpandClick: any,
-  handleAddOnToggle: any,
-  handleAddToCartClick: any,
-  handleIncreaseMealNumber: any,
-  handleDecreaseMealNumber: any,
+  id: number
 };
 
 class Place extends React.Component<Props> {
+  state = {store: PlaceStore.getStateById(this.props.id)};
 
+  specialInstructionsText: string = 'Lots of garlic';
+  mealExpanded: boolean = true;
+
+  addOns: {name: string, price: number} = [
+    {name: 'Fries', price: 20},
+    {name: 'Soda', price: 15},
+    {name: 'Dip', price: 4}
+  ];
+
+  selectedAddOns: Array<boolean> = [false, false, true];
+
+  numberOfMeals: number = 2;
+  priceOfMeal: number = 48;
+
+  expanded: boolean = true;
+
+  componentWillMount() {
+    PlaceStore.on('change', this.getStoreState);
+    PlaceActions.getPlaceById(this.props.id);
+  }
+
+  getStoreState = () => {
+    this.setState({store: PlaceStore.getStateById(this.props.id)});
+  };
+
+  getTotalPrice = mealId => {
+    const place = this.state.store.get('place');
+    const selectedAddOns = this.state.store.get('selectedAddOns');
+
+    let totalPrice = 0;
+
+    place.get('meals').forEach(meal => {
+      if (meal.get('_id') === mealId) {
+        let sumOfAddOns: number = 0;
+
+        meal.get('add_ons').forEach(addOn => {
+          if (selectedAddOns.getIn([meal.get('_id'), addOn.get('_id')])) {
+            sumOfAddOns += addOn.get('price');
+          }
+        });
+
+        totalPrice = this.numberOfMeals * (meal.get('price') + sumOfAddOns);
+      }
+    });
+
+    return totalPrice;
+  };
+
+  getDistance = () => {
+    const distance = 3.5;
+    //Math.floor(places.getIn([index, 'distance']) / 10) / 100;
+    return `${distance} km`;
+  };
+
+  getTimeString = () => {
+    const minTime = 20; //place.get('wait_time');
+    const maxTime = 30; //place.get('wait_time_margin');
+
+    return `${minTime} - ${maxTime} minutes`;
+  };
+
+  handleExpandClick = () => {
+    this.setState({expanded: !this.state.expanded});
+  };
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({open: false});
+  };
+
+  handleAddOnToggle = (mealId: number, addOnId: number) => {
+    PlaceActions.toggleAddOn(
+      this.state.store.getIn(['place', '_id']),
+      addOnId,
+      mealId
+    );
+  };
+
+  handleAddToCartClick = () => {
+    console.log(
+      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`
+    );
+  };
+
+  handleIncreaseMealNumber = () => {
+    console.log('increase');
+  };
+
+  handleDecreaseMealNumber = () => {
+    console.log('decrease');
+  };
 
   render() {
     const {classes} = this.props;
+    const state = this.state.store;
 
-    const foodSelectionPanels = (
-      <div className={classes.foodSelectionPanels}>
-        <Meal
-          addOns={this.props.addOns}
-          selectedAddOns={this.props.selectedAddOns}
-          numberOfMeals={this.props.numberOfMeals}
-          totalPrice={this.props.totalPrice}
-          specialInstructionsText={this.props.specialInstructionsText}
-          expanded={this.props.mealExpanded}
-          handleAddOnToggle={this.props.handleAddOnToggle}
-          handleAddToCartClick={this.props.handleAddToCartClick}
-          handleIncreaseMealNumber={this.props.handleIncreaseMealNumber}
-          handleDecreaseMealNumber={this.props.handleDecreaseMealNumber}
-        />
-      </div>
-    );
+    const MealPanels = props => {
+      const mealList = [];
+      state.getIn(['place', 'meals']).forEach(meal => {
+        const selectedAddOns = state.getIn(['selectedAddOns', meal.get('_id')]);
+        mealList.push(
+          <Meal
+            key={meal.get('_id')}
+            mealState={meal.toJS()}
+            selectedAddOns={selectedAddOns.toJS()}
+            numberOfMeals={this.numberOfMeals}
+            totalPrice={this.getTotalPrice(meal.get('_id'))}
+            specialInstructionsText={this.specialInstructionsText}
+            expanded={this.mealExpanded}
+            handleAddOnToggle={this.handleAddOnToggle}
+            handleAddToCartClick={this.handleAddToCartClick}
+            handleIncreaseMealNumber={this.handleIncreaseMealNumber}
+            handleDecreaseMealNumber={this.handleDecreaseMealNumber}
+          />
+        );
+      });
+
+      return <div className={classes.foodSelectionPanels}>{mealList}</div>;
+    };
 
     return (
       <Card className={classes.card}>
@@ -111,7 +205,7 @@ class Place extends React.Component<Props> {
         />
         <CardMedia
           className={classes.media}
-          image="https://upload.wikimedia.org/wikipedia/commons/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg"
+          image={state.getIn(['place', 'image'])}
           title="Contemplative Reptile"
         />
         <Grid
@@ -125,13 +219,13 @@ class Place extends React.Component<Props> {
             <IconButton>
               <Icon>timer</Icon>
             </IconButton>
-            <Typography variant="caption">20 - 50 minutes</Typography>
+            <Typography variant="caption">{this.props.time}</Typography>
           </Grid>
           <Grid item>
             <IconButton>
               <Icon>place</Icon>
             </IconButton>
-            <Typography variant="caption">500 meters</Typography>
+            <Typography variant="caption">{this.props.distance}</Typography>
           </Grid>
         </Grid>
         <CardActions className={classes.actions} disableActionSpacing>
@@ -143,21 +237,21 @@ class Place extends React.Component<Props> {
           </IconButton>
           <IconButton
             className={classnames(classes.expand, {
-              [classes.expandOpen]: this.props.expanded
+              [classes.expandOpen]: this.expanded
             })}
             onClick={this.props.handleExpandClick}
-            aria-expanded={this.props.expanded}
+            aria-expanded={this.expanded}
             aria-label="Show more"
           >
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
-        <Collapse in={this.props.expanded} timeout="auto" unmountOnExit>
+        <Collapse in={this.expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph variant="body2">
               Meals
             </Typography>
-            {foodSelectionPanels}
+            <MealPanels />
           </CardContent>
         </Collapse>
       </Card>
