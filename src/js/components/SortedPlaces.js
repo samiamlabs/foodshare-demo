@@ -20,12 +20,6 @@ import StarIcon from 'material-ui-icons/Star';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
-import ExpansionPanel, {
-  ExpansionPanelSummary
-} from 'material-ui/ExpansionPanel';
-import List, {ListItem, ListItemText} from 'material-ui/List';
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
 import Icon from 'material-ui/Icon';
 import Snackbar from 'material-ui/Snackbar';
 import CloseIcon from 'material-ui-icons/Close';
@@ -34,6 +28,8 @@ import CloseIcon from 'material-ui-icons/Close';
 // import SortedPlacesStore from '../stores/SortedPlacesStore';
 
 import Fade from 'material-ui/transitions/Fade';
+
+import Meal from './Meal';
 
 const styles = theme => ({
   root: {
@@ -45,7 +41,7 @@ const styles = theme => ({
     padding: theme.spacing.unit
   },
   titlePaper: {
-    width: '100%',
+    width: '100%'
     // backgroundColor: theme.palette.primary.light
   },
   listTitle: {
@@ -86,23 +82,6 @@ const styles = theme => ({
   moreButton: {
     margin: theme.spacing.unit
   },
-  addOnList: {
-    width: '100%'
-  },
-  textField: {
-    width: '80%',
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
-  },
-  numberOfSelectedFood: {
-    margin: theme.spacing.unit * 2
-  },
-  leftIcon: {
-    marginLeft: theme.spacing.unit
-  },
-  addToBasketButton: {
-    margin: theme.spacing.unit
-  },
   close: {
     width: theme.spacing.unit * 4,
     height: theme.spacing.unit * 4
@@ -111,35 +90,40 @@ const styles = theme => ({
     margin: '0px'
   },
   snackBar: {
-    bottom: 55,
+    bottom: 55
   }
 });
 
 class SortedPlaces extends React.Component {
   state = {expanded: false, checked: [], open: false};
 
+  addOns: {name: string, price: number} = [
+    {name: 'Fries', price: 20},
+    {name: 'Soda', price: 15},
+    {name: 'Dip', price: 4}
+  ];
+  selectedAddOns: Array<boolean> = [false, false, true];
+
+  numberOfMeals: number = 1;
+  priceOfMeal: number = 48;
+
+  getTotalPrice = (): number => {
+    let sumOfAddOns: number = 0;
+    this.addOns.forEach(
+      (addOn: {name: string, price: number}, index: number) => {
+        if (this.selectedAddOns[index]) {
+          sumOfAddOns += addOn.price;
+        }
+      }
+    );
+
+    const totalPrice: number =
+      this.numberOfMeals * (this.priceOfMeal + sumOfAddOns);
+    return totalPrice;
+  };
+
   handleExpandClick = () => {
     this.setState({expanded: !this.state.expanded});
-  };
-
-  handleToggle = value => () => {
-    const {checked} = this.state;
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    this.setState({
-      checked: newChecked
-    });
-  };
-
-  handleClick = () => {
-    this.setState({open: true});
   };
 
   handleClose = (event, reason) => {
@@ -150,25 +134,20 @@ class SortedPlaces extends React.Component {
     this.setState({open: false});
   };
 
-  getListItemName(value) {
-    let itemName = 'not found';
-    switch (value) {
-      case 0: {
-        itemName = 'Fries';
-        break;
-      }
-      case 1: {
-        itemName = 'Soda';
-        break;
-      }
-      case 2: {
-        itemName = 'Dip';
-        break;
-      }
-      default:
-      // Do nothing
-    }
-    return itemName;
+  handleAddOnToggle = (index: number) => {
+    console.log(index)
+  };
+
+  handleAddToCartClick = () => {
+    console.log(`Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`);
+  };
+
+  handleIncreaseMealNumber = () => {
+    console.log('increase')
+  }
+
+  handleDecreaseMealNumber = () => {
+    console.log('decrease')
   }
 
   render() {
@@ -213,97 +192,19 @@ class SortedPlaces extends React.Component {
       </div>
     );
 
-    const numberOfSelectedFood = (
-      <div className={classes.numberOfSelectedFood}>
-        <Grid container direction="row" justify="center" alignItems="center">
-          <Paper>
-            <Grid
-              container
-              direction="row"
-              justify="center"
-              alignItems="center"
-              spacing={8}
-            >
-              <Grid item>
-                <IconButton>
-                  <Icon>remove</Icon>
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <Typography>3</Typography>
-              </Grid>
-              <Grid item>
-                <IconButton>
-                  <Icon>add</Icon>
-                </IconButton>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </div>
-    );
-
-    const addOnList = (
-      <div className={classes.addOnList}>
-        <List>
-          {[0, 1, 2].map(value => (
-            <ListItem
-              key={value}
-              dense
-              button
-              onClick={this.handleToggle(value)}
-              className={classes.listItem}
-            >
-              <Checkbox
-                checked={this.state.checked.indexOf(value) !== -1}
-                tabIndex={-2}
-                disableRipple
-              />
-              <ListItemText primary={this.getListItemName(value)} />
-              <ListItemText primary={`${20 - value} kr`} />
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    );
-
-    const burgerPannel = (
-      <ExpansionPanel>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="body2" className={classes.heading}>
-            Burger
-          </Typography>
-        </ExpansionPanelSummary>
-        <div>
-          <Typography variant="body2">FOOD ADD-ONS</Typography>
-          {addOnList}
-        </div>
-        <div>
-          <Typography variant="body2">SPECIAL INSTRUCTIONS</Typography>
-          <TextField
-            id="uncontrolled"
-            label="Extra sauce, no onions, etc"
-            margin="normal"
-            className={classes.textField}
-          />
-        </div>
-        {numberOfSelectedFood}
-        <Button
-          variant="raised"
-          color="secondary"
-          fullWidth={true}
-          onClick={this.handleClick}
-        >
-          ADD 3 TO BASKET 58 kr
-          <Icon className={classes.leftIcon}>add_shopping_cart</Icon>
-        </Button>
-      </ExpansionPanel>
-    );
-
     const foodSelectionPanels = (
       <div className={classes.foodSelectionPanels}>
-        {burgerPannel}
-        {burgerPannel}
+        <Meal
+          addOns={this.addOns}
+          selectedAddOns={this.selectedAddOns}
+          numberOfMeals={this.numberOfMeals}
+          totalPrice={this.getTotalPrice()}
+          specialInstructionsText={'Infinate garlic'}
+          handleAddOnToggle={this.handleAddOnToggle}
+          handleAddToCartClick={this.handleAddToCartClick}
+          handleIncreaseMealNumber={this.handleIncreaseMealNumber}
+          handleDecreaseMealNumber={this.handleDecreaseMealNumber}
+        />
       </div>
     );
 
@@ -369,7 +270,7 @@ class SortedPlaces extends React.Component {
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
-        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+        <Collapse in={true} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph variant="body2">
               Meals
@@ -388,7 +289,7 @@ class SortedPlaces extends React.Component {
         <Paper className={classes.paper}>
           <Grid container alignItems="center" justify="center" direciton="row">
             <Grid className={classes.titlePaper} item>
-                <Typography variant="title">Under 30 minutes</Typography>
+              <Typography variant="title">Under 30 minutes</Typography>
             </Grid>
           </Grid>
           <Grid container spacing={16}>

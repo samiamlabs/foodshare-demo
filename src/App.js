@@ -34,7 +34,9 @@ const styles = theme => ({
     height: '60px'
   },
   bottomNavigation: {
-    // zIndex: 2000,
+    position: 'fixed',
+    bottom: 0,
+    width: '100%'
   }
 });
 
@@ -57,7 +59,6 @@ class App extends React.Component<{}> {
         <SimpleAppBar />
         <div className={classes.behindAppBar} />
         <div className={classes.backDrop}>
-          <SortedPlaces />
           <SortedPlaces />
         </div>
           <BottomNavigation
