@@ -45,6 +45,7 @@ type Props = {
   totalPrice: number,
   selectedAddOns: Array<boolean>,
   specialInstructionsText: string,
+  expanded: boolean,
   handleAddOnToggle: any,
   handleAddToCartClick: any,
   handleIncreaseMealNumber: any,
@@ -123,7 +124,7 @@ class Meal extends React.Component<Props, State> {
 
 
     return (
-      <ExpansionPanel expanded={true}>
+      <ExpansionPanel expanded={this.props.expanded}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="subheading">Burger</Typography>
         </ExpansionPanelSummary>

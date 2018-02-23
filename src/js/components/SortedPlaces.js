@@ -1,53 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from 'material-ui/styles';
-import classnames from 'classnames';
-import Card, {
-  CardHeader,
-  CardMedia,
-  CardContent,
-  CardActions
-} from 'material-ui/Card';
-import Collapse from 'material-ui/transitions/Collapse';
-import Avatar from 'material-ui/Avatar';
-import IconButton from 'material-ui/IconButton';
-import Typography from 'material-ui/Typography';
-import red from 'material-ui/colors/red';
-import FavoriteIcon from 'material-ui-icons/Favorite';
-import ShareIcon from 'material-ui-icons/Share';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-import StarIcon from 'material-ui-icons/Star';
+
 import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
-import Icon from 'material-ui/Icon';
 import Snackbar from 'material-ui/Snackbar';
 import CloseIcon from 'material-ui-icons/Close';
+import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
+import Typography from 'material-ui/Typography';
 
 // import SortedPlacesActions from '../actions/SortedPlacesActions';
 // import SortedPlacesStore from '../stores/SortedPlacesStore';
 
 import Fade from 'material-ui/transitions/Fade';
 
-import Meal from './Meal';
+import Place from './Place';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing.unit
   },
-  paper: {
-    backgroundColor: theme.palette.grey[50],
-    padding: theme.spacing.unit
-  },
   titlePaper: {
     width: '100%'
-    // backgroundColor: theme.palette.primary.light
   },
   listTitle: {
     display: 'flex'
   },
-  card: {},
+  paper: {
+    backgroundColor: theme.palette.grey[50],
+    padding: theme.spacing.unit
+  },
   cardGrid: {
     [theme.breakpoints.down('xs')]: {
       width: '99.5%'
@@ -56,29 +40,6 @@ const styles = theme => ({
       width: '400px'
     }
   },
-  media: {
-    height: 194
-  },
-  actions: {
-    display: 'flex'
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest
-    }),
-    marginLeft: 'auto'
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)'
-  },
-  avatar: {
-    backgroundColor: red[500]
-  },
-  starButton: {
-    display: 'flex',
-    direction: 'column'
-  },
   moreButton: {
     margin: theme.spacing.unit
   },
@@ -86,16 +47,16 @@ const styles = theme => ({
     width: theme.spacing.unit * 4,
     height: theme.spacing.unit * 4
   },
-  timeDistance: {
-    margin: '0px'
-  },
   snackBar: {
     bottom: 55
   }
 });
 
 class SortedPlaces extends React.Component {
-  state = {expanded: false, checked: [], open: false};
+  state = {expanded: false, open: false};
+
+  specialInstructionsText: string = "Lots of garlic";
+  mealExpanded: boolean = true;
 
   addOns: {name: string, price: number} = [
     {name: 'Fries', price: 20},
@@ -104,10 +65,10 @@ class SortedPlaces extends React.Component {
   ];
   selectedAddOns: Array<boolean> = [false, false, true];
 
-  numberOfMeals: number = 1;
+  numberOfMeals: number = 2;
   priceOfMeal: number = 48;
 
-  getTotalPrice = (): number => {
+  getTotalPrice = () => {
     let sumOfAddOns: number = 0;
     this.addOns.forEach(
       (addOn: {name: string, price: number}, index: number) => {
@@ -126,29 +87,30 @@ class SortedPlaces extends React.Component {
     this.setState({expanded: !this.state.expanded});
   };
 
-  handleClose = (event, reason) => {
+  handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     this.setState({open: false});
   };
 
   handleAddOnToggle = (index: number) => {
-    console.log(index)
+    console.log(index);
   };
 
   handleAddToCartClick = () => {
-    console.log(`Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`);
+    console.log(
+      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`
+    );
   };
 
   handleIncreaseMealNumber = () => {
-    console.log('increase')
-  }
+    console.log('increase');
+  };
 
   handleDecreaseMealNumber = () => {
-    console.log('decrease')
-  }
+    console.log('decrease');
+  };
 
   render() {
     const {classes} = this.props;
@@ -164,7 +126,7 @@ class SortedPlaces extends React.Component {
           open={this.state.open}
           transition={Fade}
           autoHideDuration={6000}
-          onClose={this.handleClose}
+          onClose={this.handleSnackbarClose}
           SnackbarContentProps={{
             'aria-describedby': 'message-id'
           }}
@@ -192,97 +154,6 @@ class SortedPlaces extends React.Component {
       </div>
     );
 
-    const foodSelectionPanels = (
-      <div className={classes.foodSelectionPanels}>
-        <Meal
-          addOns={this.addOns}
-          selectedAddOns={this.selectedAddOns}
-          numberOfMeals={this.numberOfMeals}
-          totalPrice={this.getTotalPrice()}
-          specialInstructionsText={'Infinate garlic'}
-          handleAddOnToggle={this.handleAddOnToggle}
-          handleAddToCartClick={this.handleAddToCartClick}
-          handleIncreaseMealNumber={this.handleIncreaseMealNumber}
-          handleDecreaseMealNumber={this.handleDecreaseMealNumber}
-        />
-      </div>
-    );
-
-    const card1 = (
-      <Card className={classes.card}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="Recipe" className={classes.avatar}>
-              R
-            </Avatar>
-          }
-          action={
-            <div>
-              <IconButton className={classes.starButton}>
-                <StarIcon color="secondary" />
-              </IconButton>
-              <Typography>4.7</Typography>
-            </div>
-          }
-          title="Roberts home cooking"
-          subheader="Potluck"
-        />
-        <CardMedia
-          className={classes.media}
-          image="https://upload.wikimedia.org/wikipedia/commons/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg"
-          title="Contemplative Reptile"
-        />
-        <Grid
-          container
-          alignItems="center"
-          justify="space-around"
-          direction="row"
-          className={classes.timeDistance}
-        >
-          <Grid item>
-            <IconButton>
-              <Icon>timer</Icon>
-            </IconButton>
-            <Typography variant="caption">20 - 50 minutes</Typography>
-          </Grid>
-          <Grid item>
-            <IconButton>
-              <Icon>place</Icon>
-            </IconButton>
-            <Typography variant="caption">500 meters</Typography>
-          </Grid>
-        </Grid>
-        <CardActions className={classes.actions} disableActionSpacing>
-          <IconButton aria-label="Add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="Share">
-            <ShareIcon />
-          </IconButton>
-          <IconButton
-            className={classnames(classes.expand, {
-              [classes.expandOpen]: this.state.expanded
-            })}
-            onClick={this.handleExpandClick}
-            aria-expanded={this.state.expanded}
-            aria-label="Show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
-        </CardActions>
-        <Collapse in={true} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragraph variant="body2">
-              Meals
-            </Typography>
-            {foodSelectionPanels}
-          </CardContent>
-        </Collapse>
-      </Card>
-    );
-
-    const card2 = card1;
-
     return (
       <div className={classes.root}>
         {snackBar}
@@ -294,10 +165,22 @@ class SortedPlaces extends React.Component {
           </Grid>
           <Grid container spacing={16}>
             <Grid item className={classes.cardGrid}>
-              {card1}
+              <Place
+                expanded={this.state.expanded}
+                mealExpanded={this.mealExpanded}
+                numberOfMeals={this.numberOfMeals}
+                addOns={this.addOns}
+                selectedAddOns={this.selectedAddOns}
+                totalPrice={this.getTotalPrice()}
+                handleExpandClick={this.handleExpandClick}
+                handleAddOnToggle={this.handleAddOnToggle}
+                handleAddToCartClick={this.handleAddToCartClick}
+                handleIncreaseMealNumber={this.handleIncreaseMealNumber}
+                handleDecreaseMealNumber={this.handleDecreaseMealNumber}
+              />
             </Grid>
             <Grid item className={classes.cardGrid}>
-              {card2}
+              <Place />
             </Grid>
           </Grid>
           <Grid
