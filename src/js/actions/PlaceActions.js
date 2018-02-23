@@ -15,6 +15,14 @@ class PlaceActions {
   toggleAddOn = (placeId: number, mealId: number, addOnId: number) => {
     dispatcher.dispatch({type: 'TOGGLE_ADD_ON', placeId, mealId, addOnId});
   };
+
+  increaseNumberOfMeals = (placeId: number, mealId: number) => {
+    dispatcher.dispatch({type: 'INCREASE_NUMBER_OF_MEALS', placeId, mealId});
+  }
+
+  decreaseNumberOfMeals = (placeId: number, mealId: number) => {
+    dispatcher.dispatch({type: 'DECREASE_NUMBER_OF_MEALS', placeId, mealId});
+  }
 }
 
 const placeActions = new PlaceActions();

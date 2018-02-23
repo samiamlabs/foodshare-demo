@@ -15,8 +15,6 @@ import Icon from 'material-ui/Icon';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import Button from 'material-ui/Button';
 
-import PlaceActions from '../actions/PlaceActions';
-
 const styles = theme => ({
   addOnList: {
     width: '100%'
@@ -54,7 +52,6 @@ type Props = {
 };
 
 class Meal extends React.Component<Props, State> {
-
   handleAddOnToggle = (id: number) => {
     this.props.handleAddOnToggle(id, this.props.mealState._id);
   };
@@ -62,12 +59,7 @@ class Meal extends React.Component<Props, State> {
   render() {
     const {classes} = this.props;
 
-    const {
-      numberOfMeals,
-      selectedAddOns,
-      totalPrice,
-      mealState
-    } = this.props;
+    const {numberOfMeals, selectedAddOns, totalPrice, mealState} = this.props;
 
     const name = mealState.name;
 
@@ -88,7 +80,12 @@ class Meal extends React.Component<Props, State> {
                 spacing={8}
               >
                 <Grid item>
-                  <IconButton onClick={this.props.handleDecreaseMealNumber}>
+                  <IconButton
+                    onClick={this.props.handleDecreaseMealNumber.bind(
+                      this,
+                      mealState._id
+                    )}
+                  >
                     <Icon>remove</Icon>
                   </IconButton>
                 </Grid>
@@ -96,7 +93,10 @@ class Meal extends React.Component<Props, State> {
                   <Typography>{props.numberOfMeals}</Typography>
                 </Grid>
                 <Grid item>
-                  <IconButton onClick={this.props.handleIncreaseMealNumber}>
+                  <IconButton onClick={this.props.handleIncreaseMealNumber.bind(
+                    this,
+                    mealState._id
+                  )}>
                     <Icon>add</Icon>
                   </IconButton>
                 </Grid>
@@ -122,7 +122,10 @@ class Meal extends React.Component<Props, State> {
                 button
                 onClick={props.handleAddOnToggle.bind(this, addOn._id)}
               >
-                <Checkbox checked={props.selectedAddOns[addOn._id]} disableRipple />
+                <Checkbox
+                  checked={props.selectedAddOns[addOn._id]}
+                  disableRipple
+                />
                 <ListItemText primary={addOn.name} />
                 <ListItemText primary={`${addOn.price} kr`} />
               </ListItem>
@@ -159,7 +162,7 @@ class Meal extends React.Component<Props, State> {
           variant="raised"
           color="secondary"
           fullWidth={true}
-          onClick={this.props.handleAddToCartClick}
+          onClick={this.props.handleAddToCartClick.bind(this, mealState._id)}
         >
           ADD {numberOfMeals} TO CART {totalPrice} kr
           <Icon className={classes.leftIcon}>add_shopping_cart</Icon>

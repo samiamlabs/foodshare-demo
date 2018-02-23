@@ -18,14 +18,17 @@ class PlaceStore extends EventEmitter {
           Immutable.fromJS(action.place)
         );
 
-        // console.log(action.place)
-
-        // Deselect all add-ons in place
         if (this.state !== this.lastState) {
           this.state
             .getIn(['places', action.id, 'place', 'meals'])
             .forEach(meal => {
+              // Set number of meals to 1
+              this.state = this.state.setIn(
+                ['places', action.id, 'numberOfMeals', meal.get('_id')],
+                1
+              );
               meal.get('add_ons').forEach(addOn => {
+                // Deselect all add-ons in place
                 this.state = this.state.setIn(
                   [
                     'places',
@@ -62,6 +65,39 @@ class PlaceStore extends EventEmitter {
           ],
           !currentToggleState
         );
+
+        this.emit('change');
+        break;
+      }
+      case 'INCREASE_NUMBER_OF_MEALS': {
+        const numberOfMeals = this.state.getIn([
+          'places',
+          action.placeId,
+          'numberOfMeals',
+          action.mealId
+        ]);
+
+        this.state = this.state.setIn(
+          ['places', action.placeId, 'numberOfMeals', action.mealId],
+          numberOfMeals + 1
+        );
+        this.emit('change');
+        break;
+      }
+      case 'DECREASE_NUMBER_OF_MEALS': {
+        const numberOfMeals = this.state.getIn([
+          'places',
+          action.placeId,
+          'numberOfMeals',
+          action.mealId
+        ]);
+
+        if(numberOfMeals > 1 ) {
+          this.state = this.state.setIn(
+            ['places', action.placeId, 'numberOfMeals', action.mealId],
+            numberOfMeals - 1
+          );
+        }
         this.emit('change');
         break;
       }
@@ -104,7 +140,8 @@ PlaceStore.defaultPlaceState = {
     },
     meals: []
   },
-  selectedAddOns: {}
+  selectedAddOns: {},
+  numberOfMeals: {}
 };
 
 PlaceStore.defaultState = {

@@ -64,18 +64,6 @@ class Place extends React.Component<Props> {
 
   specialInstructionsText: string = 'Lots of garlic';
   mealExpanded: boolean = true;
-
-  addOns: {name: string, price: number} = [
-    {name: 'Fries', price: 20},
-    {name: 'Soda', price: 15},
-    {name: 'Dip', price: 4}
-  ];
-
-  selectedAddOns: Array<boolean> = [false, false, true];
-
-  numberOfMeals: number = 2;
-  priceOfMeal: number = 48;
-
   expanded: boolean = true;
 
   componentWillMount() {
@@ -103,7 +91,12 @@ class Place extends React.Component<Props> {
           }
         });
 
-        totalPrice = this.numberOfMeals * (meal.get('price') + sumOfAddOns);
+        const numberOfMeals = this.state.store.getIn([
+          'numberOfMeals',
+          meal.get('_id')
+        ]);
+
+        totalPrice = numberOfMeals * (meal.get('price') + sumOfAddOns);
       }
     });
 
@@ -142,18 +135,24 @@ class Place extends React.Component<Props> {
     );
   };
 
-  handleAddToCartClick = () => {
+  handleAddToCartClick = (mealId, event) => {
     console.log(
-      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice()}`
+      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice(mealId)}`
     );
   };
 
-  handleIncreaseMealNumber = () => {
-    console.log('increase');
+  handleIncreaseMealNumber = (mealId, event) => {
+    PlaceActions.increaseNumberOfMeals(
+      this.state.store.getIn(['place', '_id']),
+      mealId
+    );
   };
 
-  handleDecreaseMealNumber = () => {
-    console.log('decrease');
+  handleDecreaseMealNumber = (mealId, event) => {
+    PlaceActions.decreaseNumberOfMeals(
+      this.state.store.getIn(['place', '_id']),
+      mealId
+    );
   };
 
   render() {
@@ -169,7 +168,7 @@ class Place extends React.Component<Props> {
             key={meal.get('_id')}
             mealState={meal.toJS()}
             selectedAddOns={selectedAddOns.toJS()}
-            numberOfMeals={this.numberOfMeals}
+            numberOfMeals={state.getIn(['numberOfMeals', meal.get('_id')])}
             totalPrice={this.getTotalPrice(meal.get('_id'))}
             specialInstructionsText={this.specialInstructionsText}
             expanded={this.mealExpanded}
