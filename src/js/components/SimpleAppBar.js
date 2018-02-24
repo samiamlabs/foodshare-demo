@@ -117,13 +117,13 @@ class SimpleAppBar extends React.Component<{}> {
             <Typography variant="headline">Cart</Typography>
           </MenuItem>
           {this.props.cart.map(cartItem => (
-            <MenuItem key={cartItem} onClick={this.handleClose}>
+            <MenuItem key={cartItem}>
               <Typography>{cartItem}</Typography>
             </MenuItem>
           ))}
-          <MenuItem onClick={this.handleClose}>
-            <Button color="secondary" variant="raised">
-              Send order
+          <MenuItem >
+            <Button color="secondary" variant="raised" onClick={this.handleClose}>
+              Checkout
             </Button>
           </MenuItem>
         </Menu>

@@ -19,6 +19,8 @@ import StarIcon from 'material-ui-icons/Star';
 import Icon from 'material-ui/Icon';
 import Grid from 'material-ui/Grid';
 
+import Tooltip from 'material-ui/Tooltip';
+
 import Meal from './Meal';
 
 import PlaceStore from '../stores/PlaceStore';
@@ -277,9 +279,11 @@ class Place extends React.Component<Props> {
           className={classes.timeDistance}
         >
           <Grid item>
-            <IconButton>
-              <Icon>timer</Icon>
-            </IconButton>
+            <Tooltip title="Ask for time" placement="right-start">
+              <IconButton onClick={this.handleTimerClick}>
+                <Icon>timer</Icon>
+              </IconButton>
+            </Tooltip>
             <Typography variant="caption">{this.getTimeString()}</Typography>
           </Grid>
           <Grid item>

@@ -10,7 +10,7 @@
   "food_type": "Spanish",
   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/%D0%A2%D1%80%D0%B0%D0%B4%D0%B8%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D0%BD%D0%BE_%D1%81%D0%B5%D1%80%D0%B2%D0%B8%D1%80%D0%B0%D0%BD_%D0%B0%D1%98%D0%B2%D0%B0%D1%80.jpg/1024px-%D0%A2%D1%80%D0%B0%D0%B4%D0%B8%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D0%BD%D0%BE_%D1%81%D0%B5%D1%80%D0%B2%D0%B8%D1%80%D0%B0%D0%BD_%D0%B0%D1%98%D0%B2%D0%B0%D1%80.jpg",
   "rating": 4.3,
-  "wait_time": 46,
+  "wait_time": 25,
   "wait_time_margin": 5,
   "distance": 849,
   "location": {
@@ -134,8 +134,8 @@
   "food_type": "Café",
   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Indian-Food-wikicont.jpg/800px-Indian-Food-wikicont.jpg",
   "rating": 4.7,
-  "wait_time": 19,
-  "wait_time_margin": 24,
+  "wait_time": 20,
+  "wait_time_margin": 5,
   "distance": 2603,
   "location": {
     "contry": "Brazil",
@@ -271,8 +271,8 @@
   "food_type": "Greek",
   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Food_from_Puzata_Hata_restaurant_in_Lviv.jpg/800px-Food_from_Puzata_Hata_restaurant_in_Lviv.jpg",
   "rating": 4.8,
-  "wait_time": 38,
-  "wait_time_margin": 17,
+  "wait_time": 15,
+  "wait_time_margin": 3,
   "distance": 1620,
   "location": {
     "contry": "Brazil",
@@ -381,8 +381,8 @@
   "food_type": "Israeli",
   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Crawfish_dinner_food.jpg/800px-Crawfish_dinner_food.jpg",
   "rating": 4.4,
-  "wait_time": 48,
-  "wait_time_margin": 5,
+  "wait_time": 5,
+  "wait_time_margin": 2,
   "distance": 360,
   "location": {
     "contry": "Japan",
@@ -467,7 +467,7 @@
   "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Food-plate-wood-restaurant_%2823696743244%29.jpg/800px-Food-plate-wood-restaurant_%2823696743244%29.jpg",
   "rating": 4.1,
   "wait_time": 17,
-  "wait_time_margin": 21,
+  "wait_time_margin": 3,
   "distance": 2036,
   "location": {
     "contry": "China",
@@ -575,7 +575,7 @@
   "rating": 4.8,
   "wait_time": 24,
   "wait_time_margin": 7,
-  "distance": 3470,
+  "distance": 1470,
   "location": {
     "contry": "Honduras",
     "city": "Teupasenti",
@@ -723,7 +723,7 @@
   "rating": 4.4,
   "wait_time": 37,
   "wait_time_margin": 12,
-  "distance": 4158,
+  "distance": 458,
   "location": {
     "contry": "Colombia",
     "city": "Bogotá",
@@ -823,7 +823,7 @@
   "rating": 4.5,
   "wait_time": 45,
   "wait_time_margin": 5,
-  "distance": 1512,
+  "distance": 312,
   "location": {
     "contry": "China",
     "city": "Daliu",
@@ -879,7 +879,7 @@
   "rating": 4.8,
   "wait_time": 22,
   "wait_time_margin": 26,
-  "distance": 3636,
+  "distance": 1636,
   "location": {
     "contry": "Spain",
     "city": "Leon",
