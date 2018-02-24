@@ -60,7 +60,7 @@ class SortedPlaces extends React.Component {
     SortedPlacesActions.getFoodPlaces();
   }
 
-  componentWillUnount() {
+  componentWillUnmount() {
     SortedPlacesActions.removeListener('change', this.getStoreState);
   }
 
