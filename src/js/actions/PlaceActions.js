@@ -45,6 +45,10 @@ class PlaceActions {
     );
     console.log(selectedAddOnNames);
   };
+
+  expandPlace = (placeId) => {
+    dispatcher.dispatch({type: 'EXPAND_PLACE', placeId});
+  }
 }
 
 const placeActions = new PlaceActions();

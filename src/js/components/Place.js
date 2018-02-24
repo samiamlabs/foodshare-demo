@@ -120,7 +120,7 @@ class Place extends React.Component<Props> {
   };
 
   handleExpandClick = () => {
-    this.setState({expanded: !this.state.expanded});
+    PlaceActions.expandPlace(this.state.store.getIn(['place', '_id']));
   };
 
   handleSnackbarClose = (event, reason) => {
@@ -155,8 +155,7 @@ class Place extends React.Component<Props> {
         });
       }
     });
-
-    console.log(selectedAddOnNames);
+    
     const specialInstructionsText = state.getIn([
       'specialInstructionsText',
       mealId
@@ -228,6 +227,7 @@ class Place extends React.Component<Props> {
       return <div className={classes.foodSelectionPanels}>{mealList}</div>;
     };
 
+    const expanded = state.get('placeExpanded');
     return (
       <Card className={classes.card}>
         <CardHeader
@@ -281,16 +281,16 @@ class Place extends React.Component<Props> {
           </IconButton>
           <IconButton
             className={classnames(classes.expand, {
-              [classes.expandOpen]: this.expanded
+              [classes.expandOpen]: expanded
             })}
-            onClick={this.props.handleExpandClick}
-            aria-expanded={this.expanded}
+            onClick={this.handleExpandClick}
+            aria-expanded={expanded}
             aria-label="Show more"
           >
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
-        <Collapse in={this.expanded} timeout="auto" unmountOnExit>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph variant="body2">
               Meals

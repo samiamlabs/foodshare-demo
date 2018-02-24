@@ -22,6 +22,11 @@ class PlaceStore extends EventEmitter {
           this.state
             .getIn(['places', action.id, 'place', 'meals'])
             .forEach(meal => {
+              // Set place card to not expanded
+              this.state = this.state.setIn(
+                ['places', action.id, 'placeExpanded'],
+                false
+              );
               // Set number of meals to 1
               this.state = this.state.setIn(
                 ['places', action.id, 'numberOfMeals', meal.get('_id')],
@@ -29,9 +34,14 @@ class PlaceStore extends EventEmitter {
               );
               // Set specialInstructionsText to empty
               this.state = this.state.setIn(
-                ['places', action.id, 'specialInstructionsText', meal.get('_id')],
+                [
+                  'places',
+                  action.id,
+                  'specialInstructionsText',
+                  meal.get('_id')
+                ],
                 ''
-              )
+              );
               meal.get('add_ons').forEach(addOn => {
                 // Deselect all add-ons in place
                 this.state = this.state.setIn(
@@ -97,7 +107,7 @@ class PlaceStore extends EventEmitter {
           action.mealId
         ]);
 
-        if(numberOfMeals > 1 ) {
+        if (numberOfMeals > 1) {
           this.state = this.state.setIn(
             ['places', action.placeId, 'numberOfMeals', action.mealId],
             numberOfMeals - 1
@@ -110,7 +120,23 @@ class PlaceStore extends EventEmitter {
         this.state = this.state.setIn(
           ['places', action.placeId, 'specialInstructionsText', action.mealId],
           action.value
-        )
+        );
+
+        break;
+      }
+      case 'EXPAND_PLACE': {
+        const currentExpandState = this.state.getIn([
+          'places',
+          action.placeId,
+          'placeExpanded'
+        ]);
+
+        this.state = this.state.setIn(
+          ['places', action.placeId, 'placeExpanded'],
+          !currentExpandState
+        );
+
+        this.emit('change');
 
         break;
       }
