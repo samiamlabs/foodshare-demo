@@ -19,12 +19,18 @@ class PlaceStore extends EventEmitter {
         );
 
         if (this.state !== this.lastState) {
+          // Set place card to not expanded
+          this.state = this.state.setIn(
+            ['places', action.id, 'placeExpanded'],
+            false
+          );
+
           this.state
             .getIn(['places', action.id, 'place', 'meals'])
             .forEach(meal => {
-              // Set place card to not expanded
+              // Set meal to not expanded
               this.state = this.state.setIn(
-                ['places', action.id, 'placeExpanded'],
+                ['places', action.id, 'mealsExpanded', meal.get('_id')],
                 false
               );
               // Set number of meals to 1
@@ -133,6 +139,23 @@ class PlaceStore extends EventEmitter {
 
         this.state = this.state.setIn(
           ['places', action.placeId, 'placeExpanded'],
+          !currentExpandState
+        );
+
+        this.emit('change');
+
+        break;
+      }
+      case 'EXPAND_MEAL': {
+        const currentExpandState = this.state.getIn([
+          'places',
+          action.placeId,
+          'mealsExpanded',
+          action.mealId
+        ]);
+
+        this.state = this.state.setIn(
+          ['places', action.placeId, 'mealsExpanded', action.mealId],
           !currentExpandState
         );
 

@@ -49,6 +49,10 @@ class PlaceActions {
   expandPlace = (placeId) => {
     dispatcher.dispatch({type: 'EXPAND_PLACE', placeId});
   }
+
+  expandMeal = (placeId, mealId) => {
+    dispatcher.dispatch({type: 'EXPAND_MEAL', placeId, mealId});
+  }
 }
 
 const placeActions = new PlaceActions();

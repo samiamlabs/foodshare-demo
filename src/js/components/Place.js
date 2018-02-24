@@ -18,7 +18,6 @@ import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import StarIcon from 'material-ui-icons/Star';
 import Icon from 'material-ui/Icon';
 import Grid from 'material-ui/Grid';
-import red from 'material-ui/colors/red';
 
 import Meal from './Meal';
 
@@ -44,7 +43,7 @@ const styles = theme => ({
     transform: 'rotate(180deg)'
   },
   avatar: {
-    backgroundColor: red[500]
+    backgroundColor: theme.palette.primary.light
   },
   starButton: {
     display: 'flex',
@@ -107,14 +106,15 @@ class Place extends React.Component<Props> {
   };
 
   getDistance = () => {
-    const distance = 3.5;
-    //Math.floor(places.getIn([index, 'distance']) / 10) / 100;
+    const distance =
+      Math.floor(this.state.store.getIn(['place', 'distance']) / 100) / 10;
     return `${distance} km`;
   };
 
   getTimeString = () => {
-    const minTime = 20; //place.get('wait_time');
-    const maxTime = 30; //place.get('wait_time_margin');
+    const place = this.state.store.get('place');
+    const minTime = place.get('wait_time');
+    const maxTime = minTime + place.get('wait_time_margin');
 
     return `${minTime} - ${maxTime} minutes`;
   };
@@ -148,14 +148,13 @@ class Place extends React.Component<Props> {
     state.getIn(['place', 'meals']).forEach(meal => {
       if (meal.get('_id') === mealId) {
         meal.get('add_ons').forEach(addOn => {
-          // console.log(addOn.get('_id'))
           if (state.getIn(['selectedAddOns', mealId, addOn.get('_id')])) {
             selectedAddOnNames.push(addOn.get('name'));
           }
         });
       }
     });
-    
+
     const specialInstructionsText = state.getIn([
       'specialInstructionsText',
       mealId
@@ -168,6 +167,10 @@ class Place extends React.Component<Props> {
       specialInstructionsText,
       selectedAddOnNames
     );
+  };
+
+  handleExpandMealToggle = (mealId, event) => {
+    PlaceActions.expandMeal(this.state.store.getIn(['place', '_id']), mealId);
   };
 
   handleIncreaseMealNumber = (mealId, event) => {
@@ -211,8 +214,9 @@ class Place extends React.Component<Props> {
             selectedAddOns={selectedAddOns.toJS()}
             numberOfMeals={state.getIn(['numberOfMeals', meal.get('_id')])}
             totalPrice={this.getTotalPrice(meal.get('_id'))}
-            expanded={this.mealExpanded}
+            expanded={state.getIn(['mealsExpanded', meal.get('_id')])}
             specialInstructionsText={specialInstructionsText}
+            handleExpandMealToggle={this.handleExpandMealToggle}
             handleAddOnToggle={this.handleAddOnToggle}
             handleAddToCartClick={this.handleAddToCartClick}
             handleIncreaseMealNumber={this.handleIncreaseMealNumber}
@@ -232,25 +236,24 @@ class Place extends React.Component<Props> {
       <Card className={classes.card}>
         <CardHeader
           avatar={
-            <Avatar aria-label="Recipe" className={classes.avatar}>
-              R
-            </Avatar>
+            <Avatar aria-label="Place" src={state.getIn(['place', 'owner', 'avatar'])} className={classes.avatar}/>
           }
           action={
             <div>
               <IconButton className={classes.starButton}>
                 <StarIcon color="secondary" />
               </IconButton>
-              <Typography>4.7</Typography>
+              <Typography>{state.getIn(['place', 'rating'])}</Typography>
             </div>
           }
-          title="Roberts home cooking"
-          subheader="Potluck"
+          title={state.getIn(['place', 'name'])}
+          subheader={state.getIn(['place', 'food_type'])}
         />
         <CardMedia
           className={classes.media}
           image={state.getIn(['place', 'image'])}
           title="Contemplative Reptile"
+          onClick={this.handleExpandClick}
         />
         <Grid
           container
@@ -263,13 +266,13 @@ class Place extends React.Component<Props> {
             <IconButton>
               <Icon>timer</Icon>
             </IconButton>
-            <Typography variant="caption">{this.props.time}</Typography>
+            <Typography variant="caption">{this.getTimeString()}</Typography>
           </Grid>
           <Grid item>
             <IconButton>
               <Icon>place</Icon>
             </IconButton>
-            <Typography variant="caption">{this.props.distance}</Typography>
+            <Typography variant="caption">{this.getDistance()}</Typography>
           </Grid>
         </Grid>
         <CardActions className={classes.actions} disableActionSpacing>

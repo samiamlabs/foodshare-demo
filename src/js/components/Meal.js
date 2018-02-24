@@ -146,7 +146,10 @@ class Meal extends React.Component<Props, State> {
     );
 
     return (
-      <ExpansionPanel expanded={this.props.expanded}>
+      <ExpansionPanel
+        expanded={this.props.expanded}
+        onChange={this.props.handleExpandMealToggle.bind(this, mealState._id)}
+      >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="subheading">{name}</Typography>
         </ExpansionPanelSummary>
