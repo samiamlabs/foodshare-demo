@@ -60,13 +60,8 @@ type Props = {
 
 class Place extends React.Component<Props> {
   state = {
-    store: PlaceStore.getStateById(this.props.id),
-    specialInstructionsText: ''
+    store: PlaceStore.getStateById(this.props.id)
   };
-
-  specialInstructionsText: string = 'Lots of garlic';
-  mealExpanded: boolean = true;
-  expanded: boolean = true;
 
   componentWillMount() {
     PlaceStore.on('change', this.getStoreState);
@@ -145,12 +140,13 @@ class Place extends React.Component<Props> {
   handleAddToCartClick = (mealId, event) => {
     const state = PlaceStore.getStateById(this.props.id);
     const numberOfMeals = state.getIn(['numberOfMeals', mealId]);
-    const name = state.getIn(['place', 'meals', mealId, 'name']);
     const price = this.getTotalPrice(mealId);
 
     const selectedAddOnNames = [];
+    let name = '';
     state.getIn(['place', 'meals']).forEach(meal => {
       if (meal.get('_id') === mealId) {
+        name = meal.get('name');
         meal.get('add_ons').forEach(addOn => {
           if (state.getIn(['selectedAddOns', mealId, addOn.get('_id')])) {
             selectedAddOnNames.push(addOn.get('name'));
@@ -199,6 +195,16 @@ class Place extends React.Component<Props> {
     );
   };
 
+  handlePlaceClick = () => {
+    const location = this.state.store.getIn(['place', 'location']);
+    const latitude = location.get('latitude');
+    const longitude = location.get('longitude');
+
+    const googleMapsUrl =
+      'https://www.google.com/maps/?q=' + latitude + ',' + longitude;
+    window.open(googleMapsUrl, '_blank');
+  };
+
   render() {
     const {classes} = this.props;
     const state = this.state.store;
@@ -240,7 +246,11 @@ class Place extends React.Component<Props> {
       <Card className={classes.card}>
         <CardHeader
           avatar={
-            <Avatar aria-label="Place" src={state.getIn(['place', 'owner', 'avatar'])} className={classes.avatar}/>
+            <Avatar
+              aria-label="Place"
+              src={state.getIn(['place', 'owner', 'avatar'])}
+              className={classes.avatar}
+            />
           }
           action={
             <div>
@@ -273,7 +283,7 @@ class Place extends React.Component<Props> {
             <Typography variant="caption">{this.getTimeString()}</Typography>
           </Grid>
           <Grid item>
-            <IconButton>
+            <IconButton onClick={this.handlePlaceClick}>
               <Icon>place</Icon>
             </IconButton>
             <Typography variant="caption">{this.getDistance()}</Typography>

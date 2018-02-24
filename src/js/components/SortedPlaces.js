@@ -47,9 +47,6 @@ const styles = theme => ({
 class SortedPlaces extends React.Component {
   state = {
     store: SortedPlacesStore.getState(),
-    underThirtyExpanded: false,
-    moreExpanded: false,
-    closeExpanded: false
   };
 
   getStoreState = () => {
@@ -67,24 +64,6 @@ class SortedPlaces extends React.Component {
     SortedPlacesActions.removeListener('change', this.getStoreState);
   }
 
-  handleMoreClick = (title: string, event) => {
-    switch (title) {
-      case 'Under 30 minutes': {
-        this.setState({underThirtyExpanded: !this.state.underThirtyExpanded});
-        break;
-      }
-      case 'Close to you': {
-        this.setState({closeExpanded: !this.state.closeExpanded});
-        break;
-      }
-      case 'More places': {
-        this.setState({moreExpanded: !this.state.moreExpanded});
-        break;
-      }
-      default:
-      // Do nothing
-    }
-  };
 
   render() {
     const {classes} = this.props;
@@ -130,7 +109,7 @@ class SortedPlaces extends React.Component {
               <Button
                 color="primary"
                 className={classes.moreButton}
-                onClick={this.handleMoreClick.bind(this, props.title)}
+                onClick={this.props.handleMoreClick.bind(this, props.title)}
               >
                 {props.buttonLabel}
               </Button>
@@ -140,15 +119,15 @@ class SortedPlaces extends React.Component {
       </Grid>
     );
 
-    const maxDisplayUnderThirty = this.state.underThirtyExpanded ? 5 : 2;
-    const maxDisplayClose = this.state.closeExpanded ? 5 : 2;
-    const maxDisplayMore = this.state.moreExpanded ? 10 : 2;
+    const maxDisplayUnderThirty = this.props.underThirtyExpanded ? 5 : 2;
+    const maxDisplayClose = this.props.closeExpanded ? 5 : 2;
+    const maxDisplayMore = this.props.moreExpanded ? 10 : 2;
 
-    const labelDisplayUnderThirty = this.state.underThirtyExpanded
+    const labelDisplayUnderThirty = this.props.underThirtyExpanded
       ? 'LESS'
       : 'MORE';
-    const labelDisplayClose = this.state.closeExpanded ? 'LESS' : 'MORE';
-    const labelDisplayMore = this.state.moreExpanded ? 'LESS' : 'MORE';
+    const labelDisplayClose = this.props.closeExpanded ? 'LESS' : 'MORE';
+    const labelDisplayMore = this.props.moreExpanded ? 'LESS' : 'MORE';
 
     return (
       <div className={classes.root}>

@@ -11,6 +11,9 @@ class PlaceStore extends EventEmitter {
 
     // FIXME: are 20 to much?
     this.setMaxListeners(20);
+
+    // FIXME: do this a less hacky way
+    this.isInitiated = {};
   }
 
   handleActions(action) {
@@ -21,7 +24,8 @@ class PlaceStore extends EventEmitter {
           Immutable.fromJS(action.place)
         );
 
-        if (this.state !== this.lastState) {
+        if (typeof (this.isInitiated[action.id]) === 'undefined') {
+          this.isInitiated[action.id] = true;
           // Set place card to not expanded
           this.state = this.state.setIn(
             ['places', action.id, 'placeExpanded'],

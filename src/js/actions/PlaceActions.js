@@ -44,15 +44,24 @@ class PlaceActions {
       `Order: ${numberOfMeals} x ${name}, note: ${specialInstructionsText} price: ${price}`
     );
     console.log(selectedAddOnNames);
+
+    dispatcher.dispatch({
+      type: 'ADD_TO_CART',
+      numberOfMeals,
+      name,
+      price,
+      specialInstructionsText,
+      selectedAddOnNames
+    });
   };
 
-  expandPlace = (placeId) => {
+  expandPlace = placeId => {
     dispatcher.dispatch({type: 'EXPAND_PLACE', placeId});
-  }
+  };
 
   expandMeal = (placeId, mealId) => {
     dispatcher.dispatch({type: 'EXPAND_MEAL', placeId, mealId});
-  }
+  };
 }
 
 const placeActions = new PlaceActions();
