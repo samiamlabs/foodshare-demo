@@ -21,22 +21,23 @@ class SortedPlacesStore extends EventEmitter {
           Immutable.fromJS(action.places)
         );
 
-        // TODO: Change implementation to allow update and preserve selection
-        this.state.get('underThirtyMinutesPlaces').forEach(place => {
-          place.get('meals').forEach(meal => {
-            meal.get('add_ons').forEach(addOn => {
-              this.state = this.state.setIn(
-                [
-                  'selectedAddOns',
-                  place.get('_id'),
-                  meal.get('_id'),
-                  addOn.get('_id')
-                ],
-                false
-              );
-            });
-          });
-        });
+        this.emit('change');
+        break;
+      }
+      case 'CLOSE_PLACES': {
+        this.state = this.state.set(
+          'closePlaces',
+          Immutable.fromJS(action.places)
+        );
+
+        this.emit('change');
+        break;
+      }
+      case 'MORE_PLACES': {
+        this.state = this.state.set(
+          'morePlaces',
+          Immutable.fromJS(action.places)
+        );
 
         this.emit('change');
         break;
@@ -50,7 +51,8 @@ class SortedPlacesStore extends EventEmitter {
 // Default state
 SortedPlacesStore.defaultState = {
   underThirtyMinutesPlaces: [],
-  selectedAddOns: {}
+  closePlaces: [],
+  morePlaces: [],
 };
 
 const sortedPlacesStore = new SortedPlacesStore();

@@ -4,16 +4,11 @@ import {withStyles} from 'material-ui/styles';
 
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
-import Snackbar from 'material-ui/Snackbar';
-import CloseIcon from 'material-ui-icons/Close';
 import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 
 import SortedPlacesActions from '../actions/SortedPlacesActions';
 import SortedPlacesStore from '../stores/SortedPlacesStore';
-
-import Fade from 'material-ui/transitions/Fade';
 
 import Place from './Place';
 
@@ -29,7 +24,7 @@ const styles = theme => ({
     display: 'flex'
   },
   paper: {
-    backgroundColor: theme.palette.grey[50],
+    backgroundColor: theme.palette.grey[100],
     padding: theme.spacing.unit
   },
   cardGrid: {
@@ -46,14 +41,16 @@ const styles = theme => ({
   close: {
     width: theme.spacing.unit * 4,
     height: theme.spacing.unit * 4
-  },
-  snackBar: {
-    bottom: 55
   }
 });
 
 class SortedPlaces extends React.Component {
-  state = {store: SortedPlacesStore.getState()};
+  state = {
+    store: SortedPlacesStore.getState(),
+    underThirtyExpanded: false,
+    moreExpanded: false,
+    closeExpanded: false
+  };
 
   getStoreState = () => {
     this.setState({
@@ -66,58 +63,40 @@ class SortedPlaces extends React.Component {
     SortedPlacesActions.getFoodPlaces();
   }
 
-  componentWillUnMount() {
+  componentWillUnount() {
     SortedPlacesActions.removeListener('change', this.getStoreState);
   }
+
+  handleMoreClick = (title: string, event) => {
+    switch (title) {
+      case 'Under 30 minutes': {
+        this.setState({underThirtyExpanded: !this.state.underThirtyExpanded});
+        break;
+      }
+      case 'Close to you': {
+        this.setState({closeExpanded: !this.state.closeExpanded});
+        break;
+      }
+      case 'More places': {
+        this.setState({moreExpanded: !this.state.moreExpanded});
+        break;
+      }
+      default:
+      // Do nothing
+    }
+  };
 
   render() {
     const {classes} = this.props;
 
-    const snackBar = (
-      <div>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left'
-          }}
-          className={classes.snackBar}
-          open={this.state.open}
-          transition={Fade}
-          autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          SnackbarContentProps={{
-            'aria-describedby': 'message-id'
-          }}
-          message={<span id="message-id">Added 3 items to cart</span>}
-          action={[
-            <Button
-              key="undo"
-              color="secondary"
-              size="small"
-              onClick={this.handleClose}
-            >
-              UNDO
-            </Button>,
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              className={classes.close}
-              onClick={this.handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
-          ]}
-        />
-      </div>
-    );
-
     const state = this.state.store;
-    const places = state.get('underThirtyMinutesPlaces');
+    const underThirtyPlaces = state.get('underThirtyMinutesPlaces');
+    const closePlaces = state.get('closePlaces');
+    const morePlaces = state.get('morePlaces');
 
-    const PlaceList = props => {
+    const PlaceArray = props => {
       const placeList = [];
-      places.forEach((place, index) => {
+      props.places.forEach((place, index) => {
         // FIXME: use list of _id
         if (index < props.numberOfPlaces) {
           placeList.push(
@@ -130,17 +109,16 @@ class SortedPlaces extends React.Component {
       return placeList;
     };
 
-    return (
-      <div className={classes.root}>
-        {snackBar}
+    const PlaceList = props => (
+      <Grid item>
         <Paper className={classes.paper}>
           <Grid container alignItems="center" justify="center" direciton="row">
             <Grid className={classes.titlePaper} item>
-              <Typography variant="title">Under 30 minutes</Typography>
+              <Typography variant="title">{props.title}</Typography>
             </Grid>
           </Grid>
           <Grid container spacing={16}>
-            <PlaceList numberOfPlaces={2} />
+            <PlaceArray numberOfPlaces={props.max} places={props.places} />
           </Grid>
           <Grid
             container
@@ -149,12 +127,51 @@ class SortedPlaces extends React.Component {
             direction="row"
           >
             <Grid item>
-              <Button color="primary" className={classes.moreButton}>
-                MORE
+              <Button
+                color="primary"
+                className={classes.moreButton}
+                onClick={this.handleMoreClick.bind(this, props.title)}
+              >
+                {props.buttonLabel}
               </Button>
             </Grid>
           </Grid>
         </Paper>
+      </Grid>
+    );
+
+    const maxDisplayUnderThirty = this.state.underThirtyExpanded ? 5 : 2;
+    const maxDisplayClose = this.state.closeExpanded ? 5 : 2;
+    const maxDisplayMore = this.state.moreExpanded ? 10 : 2;
+
+    const labelDisplayUnderThirty = this.state.underThirtyExpanded
+      ? 'LESS'
+      : 'MORE';
+    const labelDisplayClose = this.state.closeExpanded ? 'LESS' : 'MORE';
+    const labelDisplayMore = this.state.moreExpanded ? 'LESS' : 'MORE';
+
+    return (
+      <div className={classes.root}>
+        <Grid container direction="column" justify="space-between">
+          <PlaceList
+            title="Under 30 minutes"
+            places={underThirtyPlaces}
+            max={maxDisplayUnderThirty}
+            buttonLabel={labelDisplayUnderThirty}
+          />
+          <PlaceList
+            title="Close to you"
+            places={closePlaces}
+            max={maxDisplayClose}
+            buttonLabel={labelDisplayClose}
+          />
+          <PlaceList
+            title="More places"
+            places={morePlaces}
+            max={maxDisplayMore}
+            buttonLabel={labelDisplayMore}
+          />
+        </Grid>
       </div>
     );
   }

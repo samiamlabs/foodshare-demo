@@ -73,6 +73,10 @@ class Place extends React.Component<Props> {
     PlaceActions.getPlaceById(this.props.id);
   }
 
+  componentWillUnmount() {
+    PlaceStore.removeListener('change', this.getStoreState);
+  }
+
   getStoreState = () => {
     this.setState({store: PlaceStore.getStateById(this.props.id)});
   };

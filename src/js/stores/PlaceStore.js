@@ -8,6 +8,9 @@ class PlaceStore extends EventEmitter {
     super();
     this.state = Immutable.fromJS(PlaceStore.defaultState);
     this.lastState = this.state;
+
+    // FIXME: are 20 to much?
+    this.setMaxListeners(20);
   }
 
   handleActions(action) {
