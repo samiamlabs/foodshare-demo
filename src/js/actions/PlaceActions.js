@@ -18,11 +18,33 @@ class PlaceActions {
 
   increaseNumberOfMeals = (placeId: number, mealId: number) => {
     dispatcher.dispatch({type: 'INCREASE_NUMBER_OF_MEALS', placeId, mealId});
-  }
+  };
 
   decreaseNumberOfMeals = (placeId: number, mealId: number) => {
     dispatcher.dispatch({type: 'DECREASE_NUMBER_OF_MEALS', placeId, mealId});
-  }
+  };
+
+  setSpecialInstructionsText = (placeId, mealId, value) => {
+    dispatcher.dispatch({
+      type: 'SPECIAL_INSTRUCTIONS_TEXT',
+      placeId,
+      mealId,
+      value
+    });
+  };
+
+  addToCart = (
+    name,
+    numberOfMeals,
+    price,
+    specialInstructionsText,
+    selectedAddOnNames
+  ) => {
+    console.log(
+      `Order: ${numberOfMeals} x ${name}, note: ${specialInstructionsText} price: ${price}`
+    );
+    console.log(selectedAddOnNames);
+  };
 }
 
 const placeActions = new PlaceActions();

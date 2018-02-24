@@ -27,6 +27,11 @@ class PlaceStore extends EventEmitter {
                 ['places', action.id, 'numberOfMeals', meal.get('_id')],
                 1
               );
+              // Set specialInstructionsText to empty
+              this.state = this.state.setIn(
+                ['places', action.id, 'specialInstructionsText', meal.get('_id')],
+                ''
+              )
               meal.get('add_ons').forEach(addOn => {
                 // Deselect all add-ons in place
                 this.state = this.state.setIn(
@@ -101,6 +106,14 @@ class PlaceStore extends EventEmitter {
         this.emit('change');
         break;
       }
+      case 'SPECIAL_INSTRUCTIONS_TEXT': {
+        this.state = this.state.setIn(
+          ['places', action.placeId, 'specialInstructionsText', action.mealId],
+          action.value
+        )
+
+        break;
+      }
       default:
       // Do nothing
     }
@@ -141,7 +154,9 @@ PlaceStore.defaultPlaceState = {
     meals: []
   },
   selectedAddOns: {},
-  numberOfMeals: {}
+  numberOfMeals: {},
+  placeExpanded: false,
+  mealsExpanded: {}
 };
 
 PlaceStore.defaultState = {

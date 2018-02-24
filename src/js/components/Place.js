@@ -60,7 +60,10 @@ type Props = {
 };
 
 class Place extends React.Component<Props> {
-  state = {store: PlaceStore.getStateById(this.props.id)};
+  state = {
+    store: PlaceStore.getStateById(this.props.id),
+    specialInstructionsText: ''
+  };
 
   specialInstructionsText: string = 'Lots of garlic';
   mealExpanded: boolean = true;
@@ -136,8 +139,35 @@ class Place extends React.Component<Props> {
   };
 
   handleAddToCartClick = (mealId, event) => {
-    console.log(
-      `Order: ${this.numberOfMeals} meals, price: ${this.getTotalPrice(mealId)}`
+    const state = PlaceStore.getStateById(this.props.id);
+    const numberOfMeals = state.getIn(['numberOfMeals', mealId]);
+    const name = state.getIn(['place', 'meals', mealId, 'name']);
+    const price = this.getTotalPrice(mealId);
+
+    const selectedAddOnNames = [];
+    state.getIn(['place', 'meals']).forEach(meal => {
+      if (meal.get('_id') === mealId) {
+        meal.get('add_ons').forEach(addOn => {
+          // console.log(addOn.get('_id'))
+          if (state.getIn(['selectedAddOns', mealId, addOn.get('_id')])) {
+            selectedAddOnNames.push(addOn.get('name'));
+          }
+        });
+      }
+    });
+
+    console.log(selectedAddOnNames);
+    const specialInstructionsText = state.getIn([
+      'specialInstructionsText',
+      mealId
+    ]);
+
+    PlaceActions.addToCart(
+      name,
+      numberOfMeals,
+      price,
+      specialInstructionsText,
+      selectedAddOnNames
     );
   };
 
@@ -155,6 +185,14 @@ class Place extends React.Component<Props> {
     );
   };
 
+  handleSpecialInstructionsTextChange = (value, mealId) => {
+    PlaceActions.setSpecialInstructionsText(
+      this.state.store.getIn(['place', '_id']),
+      mealId,
+      value
+    );
+  };
+
   render() {
     const {classes} = this.props;
     const state = this.state.store;
@@ -163,6 +201,10 @@ class Place extends React.Component<Props> {
       const mealList = [];
       state.getIn(['place', 'meals']).forEach(meal => {
         const selectedAddOns = state.getIn(['selectedAddOns', meal.get('_id')]);
+        const specialInstructionsText = state.getIn([
+          'specialInstructionsText',
+          meal.get('_id')
+        ]);
         mealList.push(
           <Meal
             key={meal.get('_id')}
@@ -170,12 +212,15 @@ class Place extends React.Component<Props> {
             selectedAddOns={selectedAddOns.toJS()}
             numberOfMeals={state.getIn(['numberOfMeals', meal.get('_id')])}
             totalPrice={this.getTotalPrice(meal.get('_id'))}
-            specialInstructionsText={this.specialInstructionsText}
             expanded={this.mealExpanded}
+            specialInstructionsText={specialInstructionsText}
             handleAddOnToggle={this.handleAddOnToggle}
             handleAddToCartClick={this.handleAddToCartClick}
             handleIncreaseMealNumber={this.handleIncreaseMealNumber}
             handleDecreaseMealNumber={this.handleDecreaseMealNumber}
+            handleSpecialInstructionsTextChange={
+              this.handleSpecialInstructionsTextChange
+            }
           />
         );
       });

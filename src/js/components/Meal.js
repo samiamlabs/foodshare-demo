@@ -48,12 +48,20 @@ type Props = {
   handleAddOnToggle: any,
   handleAddToCartClick: any,
   handleIncreaseMealNumber: any,
-  handleDecreaseMealNumber: any
+  handleDecreaseMealNumber: any,
+  handleSpecialInstructionsTextChange: any
 };
 
 class Meal extends React.Component<Props, State> {
   handleAddOnToggle = (id: number) => {
     this.props.handleAddOnToggle(id, this.props.mealState._id);
+  };
+
+  handleChange = event => {
+    this.props.handleSpecialInstructionsTextChange(
+      event.target.value,
+      this.props.mealState._id
+    );
   };
 
   render() {
@@ -93,10 +101,12 @@ class Meal extends React.Component<Props, State> {
                   <Typography>{props.numberOfMeals}</Typography>
                 </Grid>
                 <Grid item>
-                  <IconButton onClick={this.props.handleIncreaseMealNumber.bind(
-                    this,
-                    mealState._id
-                  )}>
+                  <IconButton
+                    onClick={this.props.handleIncreaseMealNumber.bind(
+                      this,
+                      mealState._id
+                    )}
+                  >
                     <Icon>add</Icon>
                   </IconButton>
                 </Grid>
@@ -150,10 +160,11 @@ class Meal extends React.Component<Props, State> {
         <div>
           <Typography variant="body2">SPECIAL INSTRUCTIONS</Typography>
           <TextField
-            id="specialInstructions"
+            autoFocus={false}
             label="Extra sauce, no onions, etc"
             margin="normal"
-            value={this.props.specialInstructionsText}
+            defaultValue={this.props.specialInstructionsText}
+            onChange={this.handleChange}
             className={classes.textField}
           />
         </div>
